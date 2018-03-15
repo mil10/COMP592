@@ -11,27 +11,14 @@ namespace IoTSimulator
     {
         static int MIDDLEWARE_PORT = 8001;
         static int CLIENT_PORT = 8526;
-        static string CONNECT_ENV = "IOTConnect";
         static void Main(string[] args)
         {
-            if (CanConnect())
-            {
-                string clientIP = PollWebApi();// ListenToWebApi();
+            string clientIP = PollWebApi();// ListenToWebApi();
 
-                ProgressConnectionWithClientIP(clientIP);
-                Console.ReadKey();
-            }
+            ProgressConnectionWithClientIP(clientIP);
+            Console.ReadKey();           
         }       
 
-        static bool CanConnect()
-        {
-            while (true)
-            {
-                var connect = System.Environment.GetEnvironmentVariable("IOTConnect");
-                if (connect == "yes")
-                    return true;
-            }
-        }
 
         static string PollWebApi()
         {
@@ -46,7 +33,7 @@ namespace IoTSimulator
                     tcpclnt.Connect(webApiIP, MIDDLEWARE_PORT);
                     break;
                 }
-                catch(SocketException ex)
+                catch(SocketException )
                 {
                     System.Threading.Thread.Sleep(1000);
                 }
