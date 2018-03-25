@@ -13,16 +13,37 @@ namespace IoTSimulator
         static int CLIENT_PORT = 8526;
         static void Main(string[] args)
         {
+            RegisterForFileWatch();
+            
+            Console.ReadKey();           
+        }    
+        
+        static void RegisterForFileWatch()
+        {
+            string filename = "sensorvalue.txt";
+            if (!File.Exists(Path.GetTempPath() + filename))
+                File.Create(Path.GetTempPath() + filename);
+            FileSystemWatcher watcher = new FileSystemWatcher();
+            watcher.Path = Path.GetTempPath();
+            watcher.Filter = filename;
+            watcher.NotifyFilter = NotifyFilters.LastWrite;
+            watcher.Changed += SensorValueUpdated;
+            watcher.EnableRaisingEvents = true;
+            Console.WriteLine("Waiting for sensorvalue update");
+           // watcher.WaitForChanged(WatcherChangeTypes.Changed);
+        }
+
+        private static void SensorValueUpdated(object sender, FileSystemEventArgs e)
+        {
+            Console.WriteLine("Sensor value updated");
             string clientIP = PollWebApi();// ListenToWebApi();
 
             ProgressConnectionWithClientIP(clientIP);
-            Console.ReadKey();           
-        }       
-
+        }
 
         static string PollWebApi()
         {
-            string webApiIP = "192.168.56.1";
+            string webApiIP = "192.168.1.8";
             Console.WriteLine("Waiting for a connection with server.....");
 
             TcpClient tcpclnt = new TcpClient();

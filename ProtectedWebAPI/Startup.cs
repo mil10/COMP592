@@ -37,7 +37,7 @@ namespace ProtectedWebAPI
             //add this configuration for the middleware needed to validate the tokens
             app.UseIdentityServerAuthentication(new IdentityServerAuthenticationOptions
             {
-                Authority = "http://192.168.56.1:54482",
+                Authority = "http://192.168.1.8:54482",
                 RequireHttpsMetadata = false,
                 ApiName = "scope.readaccess"
             });

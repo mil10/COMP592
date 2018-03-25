@@ -18,7 +18,7 @@ namespace ConsoleTestClient
         {
             //authorization server parameters owned from the client
             //this values are issued from the authorization server to the client through a separate process (registration, etc...)
-            Uri authorizationServerTokenIssuerUri = new Uri("http://192.168.56.1:54482/connect/token");
+            Uri authorizationServerTokenIssuerUri = new Uri("http://192.168.1.8:54482/connect/token");
             string clientId = "ClientIdThatCanOnlyRead";    
             string clientSecret = "secret1";
             string scope = "scope.readaccess";
@@ -105,7 +105,7 @@ namespace ConsoleTestClient
             using (HttpClient httpClient = new HttpClient())
             {
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authorizationServerToken.access_token);
-                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "http://192.168.56.1:56086/api/values");
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "http://192.168.1.8:56086/api/values");
                 responseMessage = await httpClient.SendAsync(request);
             }
 
