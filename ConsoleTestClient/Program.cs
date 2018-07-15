@@ -16,46 +16,57 @@ namespace ConsoleTestClient
     {
         static void Main(string[] args)
         {
-            //authorization server parameters owned from the client
-            //this values are issued from the authorization server to the client through a separate process (registration, etc...)
-            Uri authorizationServerTokenIssuerUri = new Uri("http://192.168.1.8:54482/connect/token");
-            string clientId = "ClientIdThatCanOnlyRead";    
-            string clientSecret = "secret1";
-            string scope = "scope.readaccess";
+            try
+            {
+                //authorization server parameters owned from the client
+                //this values are issued from the authorization server to the client through a separate process (registration, etc...)
+                Uri authorizationServerTokenIssuerUri = new Uri("http://192.168.1.2:54482/connect/token");
+                string clientId = "ClientIdThatCanOnlyRead";
+                string clientSecret = "secret1";
+                string scope = "scope.readaccess";
 
-            //access token request
-            string rawJwtToken = RequestTokenToAuthorizationServer(
-                 authorizationServerTokenIssuerUri,
-                 clientId, 
-                 scope, 
-                 clientSecret)
-                .GetAwaiter()
-                .GetResult();
+                //access token request
+                string rawJwtToken = RequestTokenToAuthorizationServer(
+                     authorizationServerTokenIssuerUri,
+                     clientId,
+                     scope,
+                     clientSecret)
+                    .GetAwaiter()
+                    .GetResult();
 
-            AuthorizationServerAnswer authorizationServerToken;
-            authorizationServerToken = Newtonsoft.Json.JsonConvert.DeserializeObject<AuthorizationServerAnswer>(rawJwtToken);
+                AuthorizationServerAnswer authorizationServerToken;
+                authorizationServerToken = Newtonsoft.Json.JsonConvert.DeserializeObject<AuthorizationServerAnswer>(rawJwtToken);
 
-            Console.WriteLine("Token acquired from Authorization Server:");
-            Console.WriteLine(authorizationServerToken.access_token);
+                Console.WriteLine("Token acquired from Authorization Server:");
+                Console.WriteLine(authorizationServerToken.access_token);
 
-            //secured web api request
-            string response = RequestValuesToSecuredWebApi(authorizationServerToken)
-                .GetAwaiter()
-                .GetResult();
-            var port = JArray.Parse(response)[0];
-            //response = response.Replace("\"", "");
+                //secured web api request
+                string response = RequestValuesToSecuredWebApi(authorizationServerToken)
+                    .GetAwaiter()
+                    .GetResult();
+                var port = JArray.Parse(response)[0];
+                //response = response.Replace("\"", "");
 
-            //Console.WriteLine("IOT IP address received from WebAPI: ");
-            //Console.WriteLine(ipAddr);
-            Console.WriteLine("Port received from WebAPI: ");
-            Console.WriteLine(port);
+                //Console.WriteLine("IOT IP address received from WebAPI: ");
+                //Console.WriteLine(ipAddr);
+                Console.WriteLine("Port received from WebAPI: ");
+                Console.WriteLine(port);
 
-            Console.WriteLine("Communicating directly with IOT device:");
-            SendRequestToIoTDevice(port.ToString())
-                .GetAwaiter()
-                .GetResult();
+                Console.WriteLine("Communicating directly with IOT device:");
+                SendRequestToIoTDevice(port.ToString())
+                    .GetAwaiter()
+                    .GetResult();
 
-            Console.ReadKey();
+                Console.ReadKey();
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine("Message:\n" + ex.Message);
+                Console.WriteLine("InnerException:\n" + ex.InnerException);
+                Console.WriteLine("StackTrace:\n" + ex.StackTrace);
+                Console.WriteLine("Source:\n" + ex.Source);
+                Console.WriteLine("HResult:\n" + ex.HResult);
+            }
         }
 
         private static async Task<bool> SendRequestToIoTDevice(string port)
@@ -105,7 +116,7 @@ namespace ConsoleTestClient
             using (HttpClient httpClient = new HttpClient())
             {
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authorizationServerToken.access_token);
-                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "http://192.168.1.8:56086/api/values");
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "http://192.168.1.2:56086/api/values");
                 responseMessage = await httpClient.SendAsync(request);
             }
 

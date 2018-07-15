@@ -14,28 +14,31 @@ namespace IoTSimulator
         static void Main(string[] args)
         {
             RegisterForFileWatch();
-            
-            Console.ReadKey();           
+
+            // Wait for the user to quit the program.
+            Console.Write("Press \'q\' to quit the sample.\n");
+            while (Console.Read() != 'q') ;
         }    
         
         static void RegisterForFileWatch()
         {
             string filename = "sensorvalue.txt";
-            if (!File.Exists(Path.GetTempPath() + filename))
-                File.Create(Path.GetTempPath() + filename);
+            string fullpath = Path.GetTempPath() + filename;
+            if (!File.Exists(fullpath))
+                File.Create(fullpath);
             FileSystemWatcher watcher = new FileSystemWatcher();
             watcher.Path = Path.GetTempPath();
             watcher.Filter = filename;
             watcher.NotifyFilter = NotifyFilters.LastWrite;
             watcher.Changed += SensorValueUpdated;
             watcher.EnableRaisingEvents = true;
-            Console.WriteLine("Waiting for sensorvalue update");
+            Console.Write("Waiting for sensorvalue update at " + fullpath + "\n");
            // watcher.WaitForChanged(WatcherChangeTypes.Changed);
         }
 
         private static void SensorValueUpdated(object sender, FileSystemEventArgs e)
         {
-            Console.WriteLine("Sensor value updated");
+            Console.Write("Sensor value updated\n");
             string clientIP = PollWebApi();// ListenToWebApi();
 
             ProgressConnectionWithClientIP(clientIP);
@@ -43,8 +46,8 @@ namespace IoTSimulator
 
         static string PollWebApi()
         {
-            string webApiIP = "192.168.1.8";
-            Console.WriteLine("Waiting for a connection with server.....");
+            string webApiIP = "192.168.1.2";
+            Console.Write("Waiting for a connection with server.....\n");
 
             TcpClient tcpclnt = new TcpClient();
             while (true)
@@ -76,7 +79,7 @@ namespace IoTSimulator
 
             //byte[] resp = new byte[1];
             //resp[0] = 1; // OK
-            Console.WriteLine("Recieved client IP from connection: " + clientIP);
+            Console.WriteLine("Recieved client IP from connection: " + clientIP + "\n");
             //for (int i = 0; i < k; i++)
             //Console.Write(clientIP);
 
@@ -86,7 +89,7 @@ namespace IoTSimulator
 
         static void ProgressConnectionWithClientIP(string clientIp)
         {
-            Console.WriteLine("Waiting for a connection with client.....");
+            Console.WriteLine("Waiting for a connection with client.....\n");
 
             TcpClient tcpclnt = new TcpClient();
             while (true)
@@ -112,8 +115,8 @@ namespace IoTSimulator
             int k = stm.Read(responseBytes, 0, 100);
             var response = System.Text.Encoding.Default.GetString(responseBytes);
 
-            Console.WriteLine("Message received  from client: " + response);
-            Console.ReadLine();
+            Console.WriteLine("Message received  from client: " + response + "\n");
+            Console.Read();
         }
     }
 }

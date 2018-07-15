@@ -3,6 +3,8 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.0</TargetFramework>
+	<RuntimeFrameworkVersion>2.0.0</RuntimeFrameworkVersion>
+	<RuntimeIdentifiers>win8-arm</RuntimeIdentifiers>
     <ApplicationIcon />
     <StartupObject />
   </PropertyGroup>

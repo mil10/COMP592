@@ -52,7 +52,7 @@ namespace ProtectedWebAPI.Controllers
             ASCIIEncoding asen = new ASCIIEncoding();
             var str = asen.GetString(message, 0, k);
 
-            string clientIP = "192.168.1.2"; //TODO
+            string clientIP = "192.168.1.14"; //TODO
             byte[] response = asen.GetBytes(clientIP);
             s.Send(response);
 
